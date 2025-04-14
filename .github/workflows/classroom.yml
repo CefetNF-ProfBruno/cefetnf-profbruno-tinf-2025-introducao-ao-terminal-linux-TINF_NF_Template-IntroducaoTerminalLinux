@@ -1,0 +1,80 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Criar pastas 'joao' e 'maria'
+      id: criar-pastas-joao-e-maria
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Criar pastas 'joao' e 'maria'
+        setup-command: "./trabalho.sh"
+        command: "./.tests/criacao_pastas.sh"
+        timeout: 10
+        max-score: 1
+    - name: Copiar systemd para 'joao'
+      id: copiar-systemd-para-joao
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Copiar systemd para 'joao'
+        setup-command: "./trabalho.sh"
+        command: "./.tests/copiar_systemd_para_joao.sh"
+        timeout: 10
+        max-score: 1
+    - name: Copiar 'group' e 'passwd' para 'maria'
+      id: copiar-group-e-passwd-para-maria
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Copiar 'group' e 'passwd' para 'maria'
+        setup-command: "./trabalho.sh"
+        command: "./.tests/copiar_passwd_group_para_maria.sh"
+        timeout: 10
+        max-score: 1
+    - name: Criação de cópias de 'joao' e 'maria'
+      id: criacao-de-copias-de-joao-e-maria
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Criação de cópias de 'joao' e 'maria'
+        setup-command: "./trabalho.sh"
+        command: "./.tests/criar_copias_joao_maria.sh"
+        timeout: 10
+        max-score: 1
+    - name: Criação de 'mais_uma_pasta'
+      id: criacao-de-mais_uma_pasta
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Criação de 'mais_uma_pasta'
+        setup-command: "./trabalho.sh"
+        command: "./.tests/criar_mais_uma_pasta.sh"
+        timeout: 10
+        max-score: 1
+    - name: Renomeação de pastas
+      id: renomeacao-de-pastas
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Renomeação de pastas
+        setup-command: "./trabalho.sh"
+        command: "./.tests/renomear_em_mais_uma_pasta.sh"
+        timeout: 10
+        max-score: 1
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        CRIAR-PASTAS-JOAO-E-MARIA_RESULTS: "${{steps.criar-pastas-joao-e-maria.outputs.result}}"
+        COPIAR-SYSTEMD-PARA-JOAO_RESULTS: "${{steps.copiar-systemd-para-joao.outputs.result}}"
+        COPIAR-GROUP-E-PASSWD-PARA-MARIA_RESULTS: "${{steps.copiar-group-e-passwd-para-maria.outputs.result}}"
+        CRIACAO-DE-COPIAS-DE-JOAO-E-MARIA_RESULTS: "${{steps.criacao-de-copias-de-joao-e-maria.outputs.result}}"
+        CRIACAO-DE-MAIS_UMA_PASTA_RESULTS: "${{steps.criacao-de-mais_uma_pasta.outputs.result}}"
+        RENOMEACAO-DE-PASTAS_RESULTS: "${{steps.renomeacao-de-pastas.outputs.result}}"
+      with:
+        runners: criar-pastas-joao-e-maria,copiar-systemd-para-joao,copiar-group-e-passwd-para-maria,criacao-de-copias-de-joao-e-maria,criacao-de-mais_uma_pasta,renomeacao-de-pastas
